@@ -36,42 +36,61 @@ st.markdown("### Welcome to the Lyzr Recipe Bot!")
 
 # Initialize openai api key
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+vector_store={
+     "vector_store_type": "WeaviateVectorStore",
+        "url": os.getenv('Cluster_URl'),
+        "api_key": os.getenv('Clust_API'),
+        "index_name": "Soumya"
+}
+
+def recipeBot():
+    chefBot=ChatBot.pdf_chat(
+        input_files=["dinnerRecipe.pdf"], 
+        vector_store_params=vector_store
+    )
+    return chefBot
+chefBot=recipeBot()
+user_input=st.text_input("What do you want to cook?") 
+if user_input is not None:
+   if st.button("submit"): 
+       response=chefBot.chat(user_input)
+       st.write(response.response)
 
 
 # Generate a unique index name based on the current timestamp
-unique_index_name = f"IndexName_{int(time.time())}"
-vector_store_params = {"index_name": unique_index_name}
-st.session_state["chatbot"] = ChatBot.pdf_chat(
-    input_files=["dinnerRecipe.pdf"], vector_store_params=vector_store_params
-)
+#  unique_index_name = f"IndexName_{int(time.time())}"
+# vector_store_params = {"index_name": unique_index_name}
+# st.session_state["chatbot"] = ChatBot.pdf_chat(
+#     input_files=["dinnerRecipe.pdf"], vector_store_params=vector_store_params
+# ) 
 
 # # Inform the user that the files have been uploaded and processed
 # st.success("PDFs uploaded and processed. You can now interact with the chatbot.")
 
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# """ if "messages" not in st.session_state:
+#     st.session_state.messages = []
 
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# for message in st.session_state.messages:
+#     with st.chat_message(message["role"]):
+#         st.markdown(message["content"])
 
-if "chatbot" in st.session_state:
-    if prompt := st.chat_input("What is up?"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+# if "chatbot" in st.session_state:
+#     if prompt := st.chat_input("What is up?"):
+#         st.session_state.messages.append({"role": "user", "content": prompt})
+#         with st.chat_message("user"):
+#             st.markdown(prompt)
 
-        with st.chat_message("assistant"):
-            response = st.session_state["chatbot"].chat(prompt)
-            chat_response = response.response
-            response = st.write(chat_response)
-        st.session_state.messages.append(
-            {"role": "assistant", "content": chat_response}
-        )
-else:
-    st.warning("Please upload PDF files to continue.")
+#         with st.chat_message("assistant"):
+#             response = st.session_state["chatbot"].chat(prompt)
+#             chat_response = response.response
+#             response = st.write(chat_response)
+#         st.session_state.messages.append(
+#             {"role": "assistant", "content": chat_response}
+#         )
+# else:
+#     st.warning("Please upload PDF files to continue.") """
 
 
 # Footer or any additional information
